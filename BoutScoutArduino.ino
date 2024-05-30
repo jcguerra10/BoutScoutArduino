@@ -6,6 +6,9 @@
 
 #include <SPI.h>
 #include <SD.h>
+
+#include <Wire.h>
+#include <DS3231.h>
 // -------------------------- Definitions --------------------------
 // -------------------- DHT11 --------------------
 #define PIN_DHT11 7
@@ -43,6 +46,9 @@ void detectsMovement() {
   lastTrigger = millis();
 }
 
+//
+RTClib myRTC;
+
 void setup() {
   Serial.begin(9600);
   Serial.println(F("DHTxx test!"));
@@ -73,6 +79,9 @@ void setup() {
 
   pinMode(led, OUTPUT);
   digitalWrite(led, LOW);
+
+  Wire.begin();
+
 }
 
 // --------------------------------- Loop ---------------------------------
@@ -114,10 +123,25 @@ void loop() {
     motion = false;
   }
 
+  int value = analogRead(A1);
+
+  DateTime now = myRTC.now();
+
   // -------- PRINT / SAVE --------
   Serial.println("-----------------------------------------------");
   Serial.print("Capture Time: ");
-  Serial.println(timeMillis);
+  Serial.print(now.year(), DEC);
+  Serial.print('/');
+  Serial.print(now.month(), DEC);
+  Serial.print('/');
+  Serial.print(now.day(), DEC);
+  Serial.print(' ');
+  Serial.print(now.hour(), DEC);
+  Serial.print(':');
+  Serial.print(now.minute(), DEC);
+  Serial.print(':');
+  Serial.print(now.second(), DEC);
+  Serial.println();
   Serial.println("-------------------- DHT11 --------------------");
   Serial.print(F("Humidity: "));
   Serial.print(h);
@@ -136,6 +160,9 @@ void loop() {
   Serial.println("-------------------- AM312 --------------------");
   Serial.print("Movement?: ");
   Serial.println(motion);
+
+  Serial.print("Analog  Value: ");
+  Serial.println(value);
   Serial.println();
 
   // -------- PRINT / SAVE --------
@@ -152,6 +179,9 @@ void loop() {
   dataString += String(";"); 
   // -------------------- AM312 --------------------
   dataString += String(motion);
+  dataString += String(";"); 
+  // -------------------- photoresistor ------------
+  dataString += String(value);
 
   // open the file. note that only one file can be open at a time,
   // so you have to close this one befores opening another.
