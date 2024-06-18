@@ -14,7 +14,7 @@
 #define PIN_DHT11 7
 #define DHTTYPE DHT11
 // -------------------- DS18B20 ------------------
-#define ONE_WIRE_BUS 6
+// #define ONE_WIRE_BUS 6
 // -------------------- AM312 --------------------
 #define timeSeconds 2
 
@@ -22,10 +22,10 @@
 // -------------------- DHT11 --------------------
 DHT dht(PIN_DHT11, DHTTYPE);
 // -------------------- DS18B20 ------------------
-// Setup a oneWire instance to communicate with any OneWire devices
-OneWire oneWire(ONE_WIRE_BUS);
-// Pass our oneWire reference to Dallas Temperature sensor 
-DallasTemperature sensors(&oneWire);
+// // Setup a oneWire instance to communicate with any OneWire devices
+// OneWire oneWire(ONE_WIRE_BUS);
+// // Pass our oneWire reference to Dallas Temperature sensor 
+// DallasTemperature sensors(&oneWire);
 // -------------------- AM312 --------------------
 // Set GPIOs for LED and PIR Motion Sensor
 const int led = LED_BUILTIN;
@@ -70,7 +70,7 @@ void setup() {
   // -------------------- GENERAL -------------------
 
   dht.begin();
-  sensors.begin();
+  // sensors.begin();
 
   // -------------------- AM312 --------------------
   pinMode(motionSensor, INPUT_PULLUP);
@@ -107,7 +107,7 @@ void loop() {
   float hic = dht.computeHeatIndex(t, h, false);
 
   // -------------------- DS18B20 ------------------
-  sensors.requestTemperatures();
+  // sensors.requestTemperatures();
 
   // -------------------- AM312 --------------------
   now = millis();
@@ -153,9 +153,9 @@ void loop() {
   Serial.print(hic);
   Serial.println(F("°C"));
 
-  Serial.println("-------------------- DS18B20 ------------------");
-  Serial.print("Celsius temperature: ");
-  Serial.println(sensors.getTempCByIndex(0)); 
+  // Serial.println("-------------------- DS18B20 ------------------");
+  // Serial.print("Celsius temperature: ");
+  // Serial.println(sensors.getTempCByIndex(0)); 
 
   Serial.println("-------------------- AM312 --------------------");
   Serial.print("Movement?: ");
