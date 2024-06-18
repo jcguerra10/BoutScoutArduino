@@ -58,15 +58,15 @@ void setup() {
   }
 
   // -------------------- SD -----------------------
-  Serial.print("Initializing SD card...");
+  // Serial.print("Initializing SD card...");
 
-  // see if the card is present and can be initialized:
-  if (!SD.begin(chipSelect)) {
-    Serial.println("Card failed, or not present");
-    // don't do anything more:
-    while (1);
-  }
-  Serial.println("card initialized.");
+  // // see if the card is present and can be initialized:
+  // if (!SD.begin(chipSelect)) {
+  //   Serial.println("Card failed, or not present");
+  //   // don't do anything more:
+  //   while (1);
+  // }
+  // Serial.println("card initialized.");
   // -------------------- GENERAL -------------------
 
   dht.begin();
@@ -165,40 +165,40 @@ void loop() {
   Serial.println(value);
   Serial.println();
 
-  // -------- PRINT / SAVE --------
-  dataString += String(timeMillis);
-  dataString += String(";");
-  dataString += String(h);
-  dataString += String(";");
-  dataString += String(t);
-  dataString += String(";");
-  dataString += String(hic);
-  dataString += String(";");
-  // -------------------- DS18B20 ------------------
-  dataString += String(sensors.getTempCByIndex(0));
-  dataString += String(";"); 
-  // -------------------- AM312 --------------------
-  dataString += String(motion);
-  dataString += String(";"); 
-  // -------------------- photoresistor ------------
-  dataString += String(value);
+  // // -------- PRINT / SAVE --------
+  // dataString += String(timeMillis);
+  // dataString += String(";");
+  // dataString += String(h);
+  // dataString += String(";");
+  // dataString += String(t);
+  // dataString += String(";");
+  // dataString += String(hic);
+  // dataString += String(";");
+  // // -------------------- DS18B20 ------------------
+  // dataString += String(sensors.getTempCByIndex(0));
+  // dataString += String(";"); 
+  // // -------------------- AM312 --------------------
+  // dataString += String(motion);
+  // dataString += String(";"); 
+  // // -------------------- photoresistor ------------
+  // dataString += String(value);
 
-  // open the file. note that only one file can be open at a time,
-  // so you have to close this one befores opening another.
-  File dataFile = SD.open("data.csv", FILE_WRITE);
+  // // open the file. note that only one file can be open at a time,
+  // // so you have to close this one befores opening another.
+  // File dataFile = SD.open("data.csv", FILE_WRITE);
 
-  // if the file is available, write to it:
-  if (dataFile) {
-    dataFile.println(dataString);
-    dataFile.close();
-    // print to the serial port too:
-    Serial.println(dataString);
-  }
-  // if the file isn't open, pop up an error:
-  else {
-    Serial.println("error opening data.csv");
-    dataFile.close();
-  }
+  // // if the file is available, write to it:
+  // if (dataFile) {
+  //   dataFile.println(dataString);
+  //   dataFile.close();
+  //   // print to the serial port too:
+  //   Serial.println(dataString);
+  // }
+  // // if the file isn't open, pop up an error:
+  // else {
+  //   Serial.println("error opening data.csv");
+  //   dataFile.close();
+  // }
 
 
 }
