@@ -123,8 +123,6 @@ void loop() {
     motion = false;
   }
 
-  int value = analogRead(A1);
-
   DateTime now = myRTC.now();
 
   // -------- PRINT / SAVE --------
@@ -161,9 +159,6 @@ void loop() {
   Serial.print("Movement?: ");
   Serial.println(motion);
 
-  Serial.print("Analog  Value: ");
-  Serial.println(value);
-  Serial.println();
 
   // // -------- PRINT / SAVE --------
   // dataString += String(timeMillis);
@@ -180,8 +175,6 @@ void loop() {
   // // -------------------- AM312 --------------------
   // dataString += String(motion);
   // dataString += String(";"); 
-  // // -------------------- photoresistor ------------
-  // dataString += String(value);
 
   // // open the file. note that only one file can be open at a time,
   // // so you have to close this one befores opening another.
