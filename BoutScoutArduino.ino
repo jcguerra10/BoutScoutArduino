@@ -9,6 +9,7 @@
 
 #include <Wire.h>
 #include <DS3231.h>
+#include <Adafruit_VEML7700.h>
 // -------------------------- Definitions --------------------------
 // -------------------- DHT11 --------------------
 #define PIN_DHT11 7
@@ -30,6 +31,8 @@ DHT dht(PIN_DHT11, DHTTYPE);
 // Set GPIOs for LED and PIR Motion Sensor
 const int led = LED_BUILTIN;
 const int motionSensor = 5;
+// -------------------- VEML7700 -----------------
+Adafruit_VEML7700 veml = Adafruit_VEML7700();
 // -------------------- SD -----------------------
 const int chipSelect = SDCARD_SS_PIN;
 
@@ -56,6 +59,14 @@ void setup() {
   while (!Serial) {
     ; // wait for serial port to connect. Needed for native USB port only
   }
+  // -------------------- VEML7700 -----------------
+  if (!veml.begin()) {
+    Serial.println("Sensor not found");
+    while (1);
+  }
+
+  veml.setGain(VEML7700_GAIN_1_8);
+  veml.setIntegrationTime(VEML7700_IT_100MS);
 
   // -------------------- SD -----------------------
   // Serial.print("Initializing SD card...");
@@ -158,6 +169,9 @@ void loop() {
   Serial.println("-------------------- AM312 --------------------");
   Serial.print("Movement?: ");
   Serial.println(motion);
+  
+  Serial.println("-------------------- VEML7700 -----------------");
+    Serial.print("lux: "); Serial.println(veml.readLux());
 
 
   // // -------- PRINT / SAVE --------
