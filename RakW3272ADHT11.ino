@@ -12,7 +12,7 @@ const int ledVerde = 5;
 DHT dht(DHTPIN, DHTTYPE);
 
 unsigned long lastTime = 0;
-unsigned long interval = 35000;
+unsigned long interval = 36000;
 
 bool joined = false; // Estado de unión a la red LoRaWAN
 
@@ -37,22 +37,22 @@ void setup() {
   Serial1.println("AT+JOIN=0");
   delay(2000); // Pequeño delay para esperar respuesta
 
-  // Configurando DEVEUI
-  Serial1.println("AT+DEVEUI=8ca643ed245347a6");
-  delay(1000); // Pequeño delay para esperar respuesta
-  // Configurando APPEUI
-  Serial1.println("AT+APPEUI=8ca643ed245347a6");
-  delay(1000);
-  // Configurando APPKEY
-  Serial1.println("AT+APPKEY=764397e38b99e595aef95cc113debb48");
-  delay(1000);
+  // // Configurando DEVEUI
+  // Serial1.println("AT+DEVEUI=8ca643ed245347a6");
+  // delay(1000); // Pequeño delay para esperar respuesta
+  // // Configurando APPEUI
+  // Serial1.println("AT+APPEUI=8ca643ed245347a6");
+  // delay(1000);
+  // // Configurando APPKEY
+  // Serial1.println("AT+APPKEY=764397e38b99e595aef95cc113debb48");
+  // delay(1000);
 
-  Serial1.println("AT+BAND=5");
-  delay(1000);
-  Serial1.println("AT+MASK=0002");
-  delay(1000);
-  Serial1.println("AT+ADR=1");
-  delay(1000);
+  // Serial1.println("AT+BAND=5");
+  // delay(1000);
+  // Serial1.println("AT+MASK=0002");
+  // delay(1000);
+  // Serial1.println("AT+ADR=1");
+  // delay(1000);
 
   Serial1.println("AT+JOIN=1:0:10:5");
 
@@ -62,10 +62,9 @@ void loop() {
 
   if (Serial1.available()) {
     String line = Serial1.readStringUntil('\n');
-    if (line.indexOf("+EVT:JOINED") >= 0) {
+    if (line.indexOf("+EVT:JOINED") >= 0 || line.indexOf("+EVT:LINKCHECK:0:") >= 0) {
       joined = true;
       digitalWrite(ledVerde, HIGH);
-      Serial.println("Módulo unido a la red LoRaWAN.");
     } else if (line.indexOf("+EVT:SEND_CONFIRMED_OK") >= 0 || line.indexOf("+EVT:TX_DONE") >= 0) {
       digitalWrite(ledAzul, HIGH);
       delay(1000);
@@ -79,6 +78,9 @@ void loop() {
       delay(500);
       digitalWrite(ledAmarillo, LOW);
     }
+    if(line.indexOf("+EVT:LINKCHECK:1:0:0:0:0") >= 0) {
+      digitalWrite(ledVerde, LOW);
+    }
     
     Serial.print("RAK3272: "); // Imprime cualquier otra salida del módulo
     Serial.println(line);
@@ -89,6 +91,8 @@ void loop() {
     float h = dht.readHumidity();
     float t = dht.readTemperature();
     if (!isnan(h) && !isnan(t)) {
+      Serial1.println("AT+MASK=0002");
+      delay(1000);
       // Convertimos los valores de humedad y temperatura a un formato adecuado para el payload
       unsigned int humHex = h * 100;   // Multiplicamos por 100 para obtener más precisión
       unsigned int tempHex = t * 100;  // Multiplicamos por 100 para obtener más precisión
