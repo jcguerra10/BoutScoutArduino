@@ -35,7 +35,6 @@ bool sdError = false;
 
 void setup() {
   Serial.begin(9600);
-  while (!Serial);
 
   // Set up the LED pin as output
   pinMode(LEDPIN, OUTPUT);
