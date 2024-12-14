@@ -1,16 +1,17 @@
 #include <SPI.h>
-#include <SdFat.h>
 #include <Wire.h>
 #include <Adafruit_VEML7700.h>
 #include <RTClib.h>
 #include <DHT.h>
+#include <SdFat.h>
 
 // Pins and configuration
-#define DHTPIN 6              // Pin connected to DHT11
-#define DHTTYPE DHT11         // DHT sensor type
-#define LEDPIN 2              // Pin connected to the LED
-#define THERMISTORPIN A0      // Pin connected to the thermistor
-#define CSPIN SDCARD_SS_PIN   // Chip Select (CS) pin for SD card
+#define DHTPIN 6             // Pin connected to DHT11
+#define DHTTYPE DHT11        // DHT sensor type
+#define LEDPIN 2             // Pin connected to the LED
+#define THERMISTORPIN A0     // Pin connected to the thermistor
+#define STRAINGAUGEPIN A1    // Pin connected to strain gauge module output
+#define CSPIN SDCARD_SS_PIN  // Chip Select (CS) pin for SD card
 
 // Thermistor configuration
 #define SERIESRESISTOR 10000     // Resistor value in ohms
@@ -74,7 +75,7 @@ void setup() {
   } else {
     Serial.println("SD card initialized successfully.");
     if (dataFile.open("sensor_log.csv", O_RDWR | O_CREAT | O_APPEND)) {
-      dataFile.println("Date,Time,DHT_Temp,DHT_Hum,VEML_Lux,Thermistor_Temp");
+      dataFile.println("Date,Time,DHT_Temp,DHT_Hum,VEML_Lux,Thermistor_Temp,Strain");
       dataFile.close();
     } else {
       Serial.println("Failed to create the log file.");
@@ -115,6 +116,10 @@ void loop() {
   steinhart = 1.0 / steinhart;                 // Invert
   steinhart -= 273.15;                         // Convert to °C
 
+  // Read data from the strain gauge module
+  int strainADC = analogRead(STRAINGAUGEPIN);
+  float strainVoltage = (strainADC * 3.3) / 1023.0; // Convert ADC value to voltage
+
   // Turn off the LED
   digitalWrite(LEDPIN, LOW);
 
@@ -137,7 +142,8 @@ void loop() {
       dataFile.print(dhtError ? "Error" : String(tempDHT)); dataFile.print(",");
       dataFile.print(dhtError ? "Error" : String(hum)); dataFile.print(",");
       dataFile.print(vemlError ? "Error" : String(lux)); dataFile.print(",");
-      dataFile.println(steinhart);
+      dataFile.print(steinhart); dataFile.print(",");
+      dataFile.println(strainVoltage);
       dataFile.close();
     } else {
       Serial.println("Failed to write to the SD card.");
@@ -152,7 +158,7 @@ void loop() {
   Serial.print("°C Humidity: "); Serial.print(dhtError ? "Error" : String(hum));
   Serial.print("% Light: "); Serial.print(vemlError ? "Error" : String(lux));
   Serial.print(" lux Thermistor Temp: "); Serial.print(steinhart);
-  Serial.println("°C");
+  Serial.print("°C Strain Voltage: "); Serial.println(strainVoltage);
 
   // Sleep for 2 seconds (simulate low power mode)
   delay(2000);
